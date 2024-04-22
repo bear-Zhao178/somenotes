@@ -2,7 +2,7 @@
 gdb调试建立在编译时加了-g参数，具有调试信息的前提
 1. 开始调试
 `gdb <可执行文件名>`
-
+2. 设置follow模式
 `set follow-fork-mode child`  用于gdb调试以daemon方式运行的程序，跟踪子进程
 3. 设置运行参数
 `set args <参数列表>`
