@@ -275,8 +275,6 @@ b insert_nlm_xprtlist
     <16a0d>   DW_AT_decl_file   : 25
     <16a0e>   DW_AT_decl_line   : 22
     <16a0f>   DW_AT_sibling     : <0x16a50>
-	
-
     <20a3d>   DW_AT_name        : (indirect string, offset: 0x88a9): ceph_state_fd
     <20a41>   DW_AT_byte_size   : 304
     <20a43>   DW_AT_decl_file   : 9
@@ -284,3 +282,38 @@ b insert_nlm_xprtlist
     <20a45>   DW_AT_sibling     : <0x20a62>
 ```
 其中`byte_size`为结构体大小，`byte_size`上面的是结构体名称
+
+# gdb抓取内存申请调用栈
+gdb脚本
+```
+[root@node51 Mon Dec 01 14:43:57 stor_user]# cat /home/zzx/clloc_break.gdb
+set breakpoint pending on
+
+break malloc_tag if mid == 0x30B0 && (size > 246 && size <= 310) || (size > 374 && size <= 438)
+commands
+    set logging file /home/zzx/nfs_alloc.log
+    set logging overwrite off
+    set logging redirect on
+    set logging on
+    echo \n---- Breakpoint hit: je_malloc_tag ----\n
+    bt
+    set logging off
+    continue
+end
+
+break calloc_tag if mid == 0x30B0 && (size > 246 && size <= 310) || (size > 374 && size <= 438)
+commands
+    set logging file /home/zzx/nfs_alloc.log
+    set logging overwrite off
+    set logging redirect on
+    set logging on
+    echo \n---- Breakpoint hit: je_calloc_tag ----\n
+    bt
+    set logging off
+    continue
+end
+```
+`gdb -p pid -x /home/zzx/clloc_break.gdb`
+	
+
+
